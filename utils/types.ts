@@ -46,3 +46,5 @@ export interface VolumesTable {
 // export type Pet = Selectable<PetTable>;
 // export type NewPet = Insertable<PetTable>;
 // export type PetUpdate = Updateable<PetTable>;
+
+export type QueryResult = { id: string, text: string };

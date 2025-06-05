@@ -48,3 +48,5 @@ export interface VolumesTable {
 // export type PetUpdate = Updateable<PetTable>;
 
 export type QueryResult = { id: string, text: string };
+
+export type SearchResult = { text: string; name: string, url: string };

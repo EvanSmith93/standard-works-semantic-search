@@ -1,6 +1,7 @@
 import { Pinecone } from "@pinecone-database/pinecone";
 import "dotenv/config";
 import { QueryResult } from "./types";
+import { getVersesAndVolumes } from "./db.server";
 
 const INDEX_NAME = "standard-works-semantic-search";
 const NAMESPACE = "__default__";
@@ -57,4 +58,53 @@ export async function queryPineconeIndex(
     id: hit._id,
     text: (hit.fields as { text: string }).text,
   }));
+}
+
+function chunk<T>(array: T[], batchSize: number) {
+  const chunks: T[][] = [];
+
+  for (let i = 0; i < array.length; i += batchSize) {
+    chunks.push(array.slice(i, i + batchSize));
+  }
+
+  return chunks;
+}
+
+async function takeMinimumTime(func: () => Promise<void>, minTime: number) {
+  const startTime = Date.now();
+  await func();
+  const endTime = Date.now();
+
+  const elapsed = endTime - startTime;
+
+  if (elapsed < minTime) {
+    return new Promise((resolve) => setTimeout(resolve, minTime - elapsed));
+  }
+  return;
+}
+
+export async function upsertDocuments(
+  documents: Awaited<ReturnType<typeof getVersesAndVolumes>>
+) {
+  const pc = new Pinecone({ apiKey: process.env.PINECONE_API_KEY! });
+
+  const namespace = pc.index(INDEX_NAME, PINECONE_HOST).namespace(NAMESPACE);
+
+  const chunks = chunk(documents, 96);
+
+  for (const chunk of chunks) {
+    console.log(chunk);
+
+    await takeMinimumTime(
+      async () =>
+        await namespace.upsertRecords(
+          chunk.map((record) => ({
+            _id: String(record.id),
+            text: record.scripture_text,
+            category: record.volume_lds_url,
+          }))
+        ),
+      750
+    );
+  }
 }

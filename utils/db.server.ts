@@ -40,3 +40,14 @@ export function getUrl(data: Awaited<ReturnType<typeof queryVerseData>>) {
 export function getFullName(data: Awaited<ReturnType<typeof queryVerseData>>) {
   return `${data.book_title} ${data.chapter_number}:${data.verse_number}`;
 }
+
+export async function getVersesAndVolumes() {
+  return await db
+    .selectFrom("verses")
+    .innerJoin("chapters", "verses.chapter_id", "chapters.id")
+    .innerJoin("books", "chapters.book_id", "books.id")
+    .innerJoin("volumes", "books.volume_id", "volumes.id")
+    .select(["volumes.volume_lds_url", "verses.id", "verses.scripture_text"])
+    // .where("verses.id", ">=", 31290)
+    .execute();
+}

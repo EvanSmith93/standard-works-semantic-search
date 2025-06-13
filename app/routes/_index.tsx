@@ -1,10 +1,15 @@
 import type { ActionFunctionArgs, MetaFunction } from "@remix-run/node";
-import { Card, ConfigProvider, Input } from "antd";
-import { useFetcher } from "@remix-run/react";
+import { Card, ConfigProvider, Input, Tag } from "antd";
+import { useFetcher, useLoaderData } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { queryPineconeIndex } from "utils/pinecone.server";
 import { SearchResult } from "utils/types";
-import { getFullName, getUrl, queryVerseData } from "utils/db.server";
+import {
+  getFullName,
+  getUrl,
+  getVolumes,
+  queryVerseData,
+} from "utils/db.server";
 import { FaGithub } from "react-icons/fa";
 
 export const meta: MetaFunction = () => {
@@ -12,14 +17,17 @@ export const meta: MetaFunction = () => {
 };
 
 export async function loader() {
-  return null;
+  const volumes = await getVolumes();
+
+  return {
+    volumes,
+  };
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  const { search } = await request.json();
-  console.log(search);
+  const { search, volumes } = await request.json();
 
-  const bestVerseIds = await queryPineconeIndex(search, 5);
+  const bestVerseIds = await queryPineconeIndex(search, volumes, 5);
 
   const results = await Promise.all(
     bestVerseIds.map(async (verse) => {
@@ -40,16 +48,14 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function Index() {
+  const data = useLoaderData<typeof loader>();
+
   const fetcher = useFetcher();
   const [search, setSearch] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
-  // const [selectedVolumes, setSelectedVolumes] = useState<string[]>([
-  //   "bom",
-  //   "dc",
-  //   "pgp",
-  //   "ot",
-  //   "nt",
-  // ]);
+  const [selectedVolumes, setSelectedVolumes] = useState<string[]>(
+    data.volumes.map((volume) => volume.volume_lds_url)
+  );
 
   useEffect(() => {
     if (fetcher.state === "idle" && fetcher.data) {
@@ -59,8 +65,14 @@ export default function Index() {
   }, [fetcher.data, fetcher.state]);
 
   function handleSearch() {
-    if (search.trim() === "") return;
-    fetcher.submit({ search }, { method: "POST", encType: "application/json" });
+    if (search.trim() === "" || selectedVolumes.length === 0) {
+      return;
+    }
+
+    fetcher.submit(
+      { search, volumes: selectedVolumes },
+      { method: "POST", encType: "application/json" }
+    );
     setSearch("");
   }
 
@@ -70,13 +82,10 @@ export default function Index() {
 
   const themeColor = "#007DA5";
 
-  // const volumeOptions = [
-  //   { label: "Old Testament", value: "ot" },
-  //   { label: "New Testament", value: "nt" },
-  //   { label: "Book of Mormon", value: "bom" },
-  //   { label: "Doctrine & Covenants", value: "dc" },
-  //   { label: "Pearl of Great Price", value: "pgp" },
-  // ];
+  const volumeOptions = data.volumes.map((volume) => ({
+    label: volume.volume_title,
+    value: volume.volume_lds_url,
+  }));
 
   return (
     <ConfigProvider
@@ -119,7 +128,7 @@ export default function Index() {
                 onSearch={handleSearch}
               />
 
-              {/* <p className="mt-4 text-md text-gray-500">
+              <p className="mt-4 text-md text-gray-500">
                 Volumes included in the search
               </p>
               <div className="mt-4 mx-auto max-w-lg">
@@ -138,7 +147,7 @@ export default function Index() {
                     {volume.label}
                   </Tag.CheckableTag>
                 ))}
-              </div> */}
+              </div>
             </div>
           </div>
 

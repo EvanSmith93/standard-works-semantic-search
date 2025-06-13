@@ -34,6 +34,7 @@ export async function createPineconeIndex() {
 
 export async function queryPineconeIndex(
   search: string,
+  volumes: string[],
   resultCount: number
 ): Promise<QueryResult[]> {
   const pc = new Pinecone({
@@ -45,15 +46,18 @@ export async function queryPineconeIndex(
     query: {
       topK: resultCount,
       inputs: { text: search },
+      filter: {
+        category: { $in: volumes },
+      },
     },
     fields: ["text", "category"],
   });
 
-  console.log(
-    searchWithId.result.hits.map(
-      (hit) => `${hit._id} - ${hit._score} - ${JSON.stringify(hit.fields)}\n\n`
-    )
-  );
+  // console.log(
+  //   searchWithId.result.hits.map(
+  //     (hit) => `${hit._id} - ${hit._score} - ${JSON.stringify(hit.fields)}\n\n`
+  //   )
+  // );
 
   return searchWithId.result.hits.map((hit) => ({
     id: hit._id,

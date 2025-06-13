@@ -33,7 +33,8 @@ export async function createPineconeIndex() {
 }
 
 export async function queryPineconeIndex(
-  search: string
+  search: string,
+  resultCount: number
 ): Promise<QueryResult[]> {
   const pc = new Pinecone({
     apiKey: process.env.PINECONE_API_KEY!,
@@ -42,7 +43,7 @@ export async function queryPineconeIndex(
 
   const searchWithId = await namespace.searchRecords({
     query: {
-      topK: 2,
+      topK: resultCount,
       inputs: { text: search },
     },
     fields: ["text", "category"],

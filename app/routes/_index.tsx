@@ -21,7 +21,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const { search } = await request.json();
   console.log(search);
 
-  const bestVerseIds = await queryPineconeIndex(search);
+  const bestVerseIds = await queryPineconeIndex(search, 5);
 
   const results = await Promise.all(
     bestVerseIds.map(async (verse) => {

@@ -1,5 +1,5 @@
 import type { ActionFunctionArgs, MetaFunction } from "@remix-run/node";
-import { Card, ConfigProvider, Input, Tag } from "antd";
+import { Card, ConfigProvider, Input, Tag, Spin } from "antd";
 import { useFetcher, useLoaderData } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { queryPineconeIndex } from "utils/pinecone.server";
@@ -56,6 +56,8 @@ export default function Index() {
   const [selectedVolumes, setSelectedVolumes] = useState<string[]>(
     data.volumes.map((volume) => volume.volume_lds_url)
   );
+  const isLoading =
+    fetcher.state === "submitting" || fetcher.state === "loading";
 
   useEffect(() => {
     if (fetcher.state === "idle" && fetcher.data) {
@@ -152,18 +154,24 @@ export default function Index() {
           </div>
 
           <div className="mx-auto mt-6 w-[50%]">
-            {results.map((result, index) => (
-              <Card
-                title={result.name}
-                size="small"
-                key={index}
-                className="mb-4 cursor-pointer shadow hover:shadow-lg transition-all duration-200"
-                hoverable
-                onClick={() => handleClick(result)}
-              >
-                {result.text}
-              </Card>
-            ))}
+            {isLoading ? (
+              <div className="flex justify-center my-8">
+                <Spin size="large" />
+              </div>
+            ) : (
+              results.map((result, index) => (
+                <Card
+                  title={result.name}
+                  size="small"
+                  key={index}
+                  className="mb-4 cursor-pointer shadow hover:shadow-lg transition-all duration-200"
+                  hoverable
+                  onClick={() => handleClick(result)}
+                >
+                  {result.text}
+                </Card>
+              ))
+            )}
           </div>
         </main>
 

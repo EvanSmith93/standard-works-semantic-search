@@ -1,5 +1,5 @@
 import type { ActionFunctionArgs, MetaFunction } from "@remix-run/node";
-import { Card, ConfigProvider, Input, Tag, Spin } from "antd";
+import { ConfigProvider } from "antd";
 import { useFetcher, useLoaderData } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { queryPineconeIndex } from "utils/pinecone.server";
@@ -10,7 +10,9 @@ import {
   getVolumes,
   queryVerseData,
 } from "utils/db.server";
-import { FaGithub } from "react-icons/fa";
+import { SearchHeader } from "~/components/SearchHeader";
+import { SearchBar } from "~/components/SearchBar";
+import { SearchResults } from "~/components/SearchResults";
 
 export const meta: MetaFunction = () => {
   return [{ title: "Gospel Library Semantic Search" }];
@@ -78,10 +80,6 @@ export default function Index() {
     setSearch("");
   }
 
-  function handleClick(result: SearchResult) {
-    window.open(result.url, "_blank", "noopener,noreferrer");
-  }
-
   const themeColor = "#007DA5";
 
   const volumeOptions = data.volumes.map((volume) => ({
@@ -100,79 +98,19 @@ export default function Index() {
     >
       <div className="min-h-screen flex flex-col justify-between p-6">
         <main>
-          <a
-            href="https://github.com/EvanSmith93/standard-works-semantic-search"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="absolute top-6 right-6 text-gray-500 text-3xl"
-            aria-label="GitHub Repository"
-          >
-            <FaGithub />
-          </a>
+          <SearchHeader />
 
-          <div className="max-w-2xl mx-auto text-center mt-24">
-            <h1 className="text-5xl font-extrabold bg-gradient-to-r from-[#005175] to-[#01B6D1] bg-clip-text text-transparent leading-tight">
-              Gospel Library
-              <br />
-              Semantic Search
-            </h1>
-            <p className="mt-4 text-xl text-gray-600">
-              Search the entire Latter-day Saint standard works using natural
-              language. Great for studying the scriptures by theme or idea, or
-              just finding that one verse you forget the reference to.
-            </p>
-
-            <div className="mt-12">
-              <Input.Search
-                placeholder="Search"
-                size="large"
-                onChange={(e) => setSearch(e.target.value)}
-                onSearch={handleSearch}
-              />
-
-              <p className="mt-4 text-md text-gray-500">
-                Volumes included in the search
-              </p>
-              <div className="mt-4 mx-auto max-w-lg">
-                {volumeOptions.map((volume) => (
-                  <Tag.CheckableTag
-                    key={volume.value}
-                    checked={selectedVolumes.includes(volume.value)}
-                    onChange={(checked) => {
-                      const next = checked
-                        ? [...selectedVolumes, volume.value]
-                        : selectedVolumes.filter((v) => v !== volume.value);
-                      setSelectedVolumes(next);
-                    }}
-                    className="text-sm mb-2"
-                  >
-                    {volume.label}
-                  </Tag.CheckableTag>
-                ))}
-              </div>
-            </div>
+          <div className="max-w-2xl mx-auto text-center">
+            <SearchBar
+              setSearch={setSearch}
+              handleSearch={handleSearch}
+              selectedVolumes={selectedVolumes}
+              setSelectedVolumes={setSelectedVolumes}
+              volumeOptions={volumeOptions}
+            />
           </div>
 
-          <div className="mx-auto mt-6 w-[50%]">
-            {isLoading ? (
-              <div className="flex justify-center my-8">
-                <Spin size="large" />
-              </div>
-            ) : (
-              results.map((result, index) => (
-                <Card
-                  title={result.name}
-                  size="small"
-                  key={index}
-                  className="mb-4 cursor-pointer shadow hover:shadow-lg transition-all duration-200"
-                  hoverable
-                  onClick={() => handleClick(result)}
-                >
-                  {result.text}
-                </Card>
-              ))
-            )}
-          </div>
+          <SearchResults results={results} isLoading={isLoading} />
         </main>
 
         <footer className="mt-24 text-center text-sm text-gray-500">

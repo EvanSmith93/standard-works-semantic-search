@@ -13,6 +13,7 @@ import {
 import { SearchHeader } from "~/components/SearchHeader";
 import { SearchBar } from "~/components/SearchBar";
 import { SearchResults } from "~/components/SearchResults";
+import { Footer } from "~/components/Footer";
 
 export const meta: MetaFunction = () => {
   return [{ title: "Gospel Library Semantic Search" }];
@@ -113,12 +114,7 @@ export default function Index() {
           <SearchResults results={results} isLoading={isLoading} />
         </main>
 
-        <footer className="mt-24 text-center text-sm text-gray-500">
-          <p>
-            Not an official website of The Church of Jesus Christ of Latter-day
-            Saints
-          </p>
-        </footer>
+        <Footer />
       </div>
     </ConfigProvider>
   );

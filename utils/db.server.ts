@@ -1,10 +1,14 @@
 import { Kysely, SqliteDialect } from "kysely";
 import SQLite from "better-sqlite3";
 import { Database } from "./types";
+import path from "path";
+
+const dbPath = path.join(process.cwd(), "public", "lds-scriptures-sqlite.db");
+console.log(dbPath);
 
 export const db = new Kysely<Database>({
   dialect: new SqliteDialect({
-    database: new SQLite("./public/lds-scriptures-sqlite.db"),
+    database: new SQLite(dbPath),
   }),
 });
 

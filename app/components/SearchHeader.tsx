@@ -14,7 +14,7 @@ export function SearchHeader() {
       </a>
 
       <div className="max-w-2xl mx-auto text-center mt-24">
-        <h1 className="text-5xl font-extrabold bg-gradient-to-r from-[#005175] to-[#01B6D1] bg-clip-text text-transparent leading-tight">
+        <h1 className="text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-[#005175] to-[#01B6D1] bg-clip-text text-transparent leading-tight">
           Gospel Library
           <br />
           Semantic Search

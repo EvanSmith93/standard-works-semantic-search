@@ -12,7 +12,7 @@ export function SearchResults({ results, isLoading }: SearchResultsProps) {
   }
 
   return (
-    <div className="mx-auto mt-6 w-[50%]">
+    <div className="mx-auto mt-6 max-w-2xl">
       {isLoading ? (
         <div className="flex justify-center my-8">
           <Spin size="large" />

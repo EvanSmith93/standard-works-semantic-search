@@ -4,7 +4,6 @@ import { Database } from "./types";
 import path from "path";
 
 const dbPath = path.join(process.cwd(), "public", "lds-scriptures-sqlite.db");
-console.log(dbPath);
 
 export const db = new Kysely<Database>({
   dialect: new SqliteDialect({

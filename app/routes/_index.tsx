@@ -50,7 +50,19 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export default function Index() {
   const fetcher = useFetcher<SearchResult[]>();
-  const [results, setResults] = useState<SearchResult[]>([]);
+
+  const testResults =
+    process.env.NODE_ENV === "development"
+      ? [
+          {
+            text: "Test scripture",
+            name: "This is a test scripture",
+            url: "https://www.google.com",
+          },
+        ]
+      : [];
+
+  const [results, setResults] = useState<SearchResult[]>(testResults);
 
   const isLoading =
     fetcher.state === "submitting" || fetcher.state === "loading";

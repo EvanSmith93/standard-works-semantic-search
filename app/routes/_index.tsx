@@ -1,6 +1,6 @@
 import type { ActionFunctionArgs, MetaFunction } from "@remix-run/node";
 import { ConfigProvider } from "antd";
-import { useFetcher, useLoaderData } from "@remix-run/react";
+import { useFetcher } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { queryPineconeIndex } from "utils/pinecone.server";
 import { SearchResult } from "utils/types";
@@ -22,9 +22,7 @@ export const meta: MetaFunction = () => {
 export async function loader() {
   const volumes = await getVolumes();
 
-  return {
-    volumes,
-  };
+  return { volumes };
 }
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -51,14 +49,9 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function Index() {
-  const data = useLoaderData<typeof loader>();
-
-  const fetcher = useFetcher();
-  const [search, setSearch] = useState("");
+  const fetcher = useFetcher<SearchResult[]>();
   const [results, setResults] = useState<SearchResult[]>([]);
-  const [selectedVolumes, setSelectedVolumes] = useState<string[]>(
-    data.volumes.map((volume) => volume.volume_lds_url)
-  );
+
   const isLoading =
     fetcher.state === "submitting" || fetcher.state === "loading";
 
@@ -69,24 +62,7 @@ export default function Index() {
     }
   }, [fetcher.data, fetcher.state]);
 
-  function handleSearch() {
-    if (search.trim() === "" || selectedVolumes.length === 0) {
-      return;
-    }
-
-    fetcher.submit(
-      { search, volumes: selectedVolumes },
-      { method: "POST", encType: "application/json" }
-    );
-    setSearch("");
-  }
-
   const themeColor = "#007DA5";
-
-  const volumeOptions = data.volumes.map((volume) => ({
-    label: volume.volume_title,
-    value: volume.volume_lds_url,
-  }));
 
   return (
     <ConfigProvider
@@ -102,13 +78,7 @@ export default function Index() {
           <SearchHeader />
 
           <div className="max-w-2xl mx-auto text-center">
-            <SearchBar
-              setSearch={setSearch}
-              handleSearch={handleSearch}
-              selectedVolumes={selectedVolumes}
-              setSelectedVolumes={setSelectedVolumes}
-              volumeOptions={volumeOptions}
-            />
+            <SearchBar fetcher={fetcher} />
           </div>
 
           <SearchResults results={results} isLoading={isLoading} />

@@ -1,40 +1,51 @@
-# Welcome to Remix!
+# Gospel Library Semantic Search
 
-- 📖 [Remix docs](https://remix.run/docs)
+A semantic search application for the Gospel Library, built with Remix and Pinecone. This application allows users to search through Latter-day Saint scriptures and other church materials using natural language queries.
+
+## Features
+
+- Semantic search across all volumes of Latter-day Saint scriptures
+- Volume selection to narrow search scope
+- Modern UI built with Ant Design and Tailwind CSS
+- Fast and relevant search results powered by Pinecone vector database
+
+## Data Source
+
+The scripture database came from [api.nephi.org](https://github.com/beandog/api.nephi.org), which provides a comprehensive SQLite database containing all Latter-day Saint scriptures. This includes:
+
+- King James Version of the Bible
+- Book of Mormon
+- Doctrine & Covenants
+- Pearl of Great Price
+
+## Environment Setup
+
+Create a `.env` file in the root directory similar to the `.env.example` file:
 
 ## Development
 
-Run the dev server:
+1. Install dependencies:
 
-```shellscript
+```bash
+npm install
+```
+
+2. Run the development server:
+
+```bash
 npm run dev
 ```
 
-## Deployment
+The application will be available at `http://localhost:5173`
 
-First, build your app for production:
+## Tech Stack
 
-```sh
-npm run build
-```
+- [Remix](https://remix.run/) - Full stack web framework
+- [Pinecone](https://www.pinecone.io/) - Vector database for semantic search
+- [Ant Design](https://ant.design/) - UI component library
+- [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
+- [SQLite](https://sqlite.org/) - Standard database with scripture information from [api.nephi.org](https://github.com/beandog/api.nephi.org)
 
-Then run the app in production mode:
+## License
 
-```sh
-npm start
-```
-
-Now you'll need to pick a host to deploy it to.
-
-### DIY
-
-If you're familiar with deploying Node applications, the built-in Remix app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
-
-- `build/server`
-- `build/client`
-
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever css framework you prefer. See the [Vite docs on css](https://vitejs.dev/guide/features.html#css) for more information.
+This project is not an official website of The Church of Jesus Christ of Latter-day Saints.

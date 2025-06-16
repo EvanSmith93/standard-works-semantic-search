@@ -1,21 +1,20 @@
-import { FetcherWithComponents, useLoaderData } from "@remix-run/react";
+import { FetcherWithComponents } from "@remix-run/react";
 import { Input, Tag } from "antd";
 import { useState, useMemo } from "react";
 import { SearchResult } from "utils/types";
-import { loader } from "~/routes/_index";
 import { TypeAnimation } from "react-type-animation";
-import { EXAMPLE_SEARCHES, shuffle } from "utils/helpers";
+import { EXAMPLE_SEARCHES, shuffle, VOLUMES } from "utils/helpers";
 
 interface SearchBarProps {
   fetcher: FetcherWithComponents<SearchResult[]>;
 }
 
 export function SearchBar({ fetcher }: SearchBarProps) {
-  const data = useLoaderData<typeof loader>();
+  // const data = useLoaderData<typeof loader>();
   const [search, setSearch] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const [selectedVolumes, setSelectedVolumes] = useState<string[]>(
-    data.volumes.map((volume) => volume.volume_lds_url)
+    VOLUMES.map((volume) => volume.volume_lds_url)
   );
 
   const sequence = useMemo(() => {
@@ -23,7 +22,7 @@ export function SearchBar({ fetcher }: SearchBarProps) {
     return shuffled.flatMap((text) => [text, 1500, "", 500]);
   }, [isFocused]);
 
-  const volumeOptions = data.volumes.map((volume) => ({
+  const volumeOptions = VOLUMES.map((volume) => ({
     label: volume.volume_title,
     value: volume.volume_lds_url,
   }));

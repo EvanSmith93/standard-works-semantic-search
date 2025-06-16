@@ -44,12 +44,12 @@ export function getFullName(data: Awaited<ReturnType<typeof queryVerseData>>) {
   return `${data.book_title} ${data.chapter_number}:${data.verse_number}`;
 }
 
-export async function getVolumes() {
-  return await db
-    .selectFrom("volumes")
-    .select(["volumes.volume_lds_url", "volumes.volume_title"])
-    .execute();
-}
+// export async function getVolumes() {
+//   return await db
+//     .selectFrom("volumes")
+//     .select(["volumes.volume_lds_url", "volumes.volume_title"])
+//     .execute();
+// }
 
 export async function getVersesAndVolumes() {
   return await db

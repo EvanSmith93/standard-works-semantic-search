@@ -28,6 +28,17 @@ export const EXAMPLE_SEARCHES = [
   "Which apostle walked on water?",
 ];
 
+export const VOLUMES = [
+  { volume_lds_url: "ot", volume_title: "Old Testament" },
+  { volume_lds_url: "nt", volume_title: "New Testament" },
+  { volume_lds_url: "bofm", volume_title: "Book of Mormon" },
+  {
+    volume_lds_url: "dc-testament",
+    volume_title: "Doctrine and Covenants",
+  },
+  { volume_lds_url: "pgp", volume_title: "Pearl of Great Price" },
+];
+
 export function shuffle<T>(array: T[]): T[] {
   return [...array].sort(() => Math.random() - 0.5);
 }

@@ -4,12 +4,7 @@ import { useFetcher } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { queryPineconeIndex } from "utils/pinecone.server";
 import { SearchResult } from "utils/types";
-import {
-  getFullName,
-  getUrl,
-  getVolumes,
-  queryVerseData,
-} from "utils/db.server";
+import { getFullName, getUrl, queryVerseData } from "utils/db.server";
 import { SearchHeader } from "~/components/SearchHeader";
 import { SearchBar } from "~/components/SearchBar";
 import { SearchResults } from "~/components/SearchResults";
@@ -19,11 +14,11 @@ export const meta: MetaFunction = () => {
   return [{ title: "Gospel Library Semantic Search" }];
 };
 
-export async function loader() {
-  const volumes = await getVolumes();
+// export async function loader() {
+//   const volumes = await getVolumes();
 
-  return { volumes };
-}
+//   return { volumes };
+// }
 
 export async function action({ request }: ActionFunctionArgs) {
   const { search, volumes } = await request.json();

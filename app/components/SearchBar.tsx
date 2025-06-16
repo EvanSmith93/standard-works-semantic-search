@@ -37,7 +37,6 @@ export function SearchBar({ fetcher }: SearchBarProps) {
       { search, volumes: selectedVolumes },
       { method: "POST", encType: "application/json" }
     );
-    setSearch("");
   }
 
   return (

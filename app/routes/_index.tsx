@@ -10,6 +10,15 @@ import { SearchBar } from "~/components/SearchBar";
 import { SearchResults } from "~/components/SearchResults";
 import { Footer } from "~/components/Footer";
 
+/*
+Other name ideas:
+* Scripturally
+* Agape AI
+* An hundredth part
+* iNephi
+* LiahonAI
+*/
+
 export const meta: MetaFunction = () => {
   return [{ title: "Gospel Library Semantic Search" }];
 };

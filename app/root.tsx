@@ -6,6 +6,7 @@ import {
   ScrollRestoration,
 } from "@remix-run/react";
 import type { LinksFunction } from "@remix-run/node";
+import { ConfigProvider } from "antd";
 
 import "./tailwind.css";
 
@@ -40,6 +41,19 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
+const themeColor = "#007DA5";
+
 export default function App() {
-  return <Outlet />;
+  return (
+    <ConfigProvider
+      theme={{
+        token: {
+          colorPrimary: themeColor,
+          colorLink: themeColor,
+        },
+      }}
+    >
+      <Outlet />
+    </ConfigProvider>
+  );
 }

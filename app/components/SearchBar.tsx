@@ -1,21 +1,29 @@
-import { FetcherWithComponents } from "@remix-run/react";
+import { useNavigate, useNavigation } from "@remix-run/react";
 import { Input, Tag } from "antd";
 import { useState, useMemo } from "react";
-import { SearchResult } from "utils/types";
 import { TypeAnimation } from "react-type-animation";
 import { EXAMPLE_SEARCHES, shuffle, VOLUMES } from "utils/helpers";
 
 interface SearchBarProps {
-  fetcher: FetcherWithComponents<SearchResult[]>;
+  initialSearch?: string;
+  initialVolumes?: string[];
 }
 
-export function SearchBar({ fetcher }: SearchBarProps) {
-  // const data = useLoaderData<typeof loader>();
-  const [search, setSearch] = useState("");
+export function SearchBar({
+  initialSearch = "",
+  initialVolumes,
+}: SearchBarProps) {
+  const navigate = useNavigate();
+  const navigation = useNavigation();
+  const [search, setSearch] = useState(initialSearch);
   const [isFocused, setIsFocused] = useState(false);
   const [selectedVolumes, setSelectedVolumes] = useState<string[]>(
-    VOLUMES.map((volume) => volume.volume_lds_url)
+    initialVolumes ?? VOLUMES.map((volume) => volume.volume_lds_url)
   );
+
+  const isSearching =
+    navigation.state === "loading" &&
+    navigation.location.pathname === "/search";
 
   const sequence = useMemo(() => {
     const shuffled = shuffle(EXAMPLE_SEARCHES);
@@ -32,10 +40,12 @@ export function SearchBar({ fetcher }: SearchBarProps) {
       return;
     }
 
-    fetcher.submit(
-      { search, volumes: selectedVolumes },
-      { method: "POST", encType: "application/json" }
-    );
+    const params = new URLSearchParams({
+      q: search.trim(),
+      volumes: selectedVolumes.join(","),
+    });
+
+    navigate(`/search?${params.toString()}`);
   }
 
   return (
@@ -44,6 +54,7 @@ export function SearchBar({ fetcher }: SearchBarProps) {
         <Input.Search
           size="large"
           value={search}
+          loading={isSearching}
           onChange={(e) => setSearch(e.target.value)}
           onSearch={handleSearch}
           onFocus={() => setIsFocused(true)}

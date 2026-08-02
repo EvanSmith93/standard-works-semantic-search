@@ -2,6 +2,7 @@ import type { MetaFunction } from "@remix-run/node";
 import { Link, useNavigate } from "@remix-run/react";
 import { Card } from "antd";
 import { useEffect, useState } from "react";
+import { MdArrowBack } from "react-icons/md";
 import {
   getSearchHistory,
   type SearchHistoryEntry,
@@ -34,12 +35,22 @@ export default function History() {
   return (
     <div className="min-h-screen flex flex-col justify-between p-6">
       <main>
-        <div className="max-w-2xl mx-auto text-center">
-          <Link to="/">
-            <h1 className="text-2xl font-extrabold bg-gradient-to-r from-[#005175] to-[#01B6D1] bg-clip-text text-transparent leading-tight">
-              Gospel Library Semantic Search
-            </h1>
-          </Link>
+        <button
+          onClick={() => navigate(-1)}
+          aria-label="Go back"
+          className="absolute top-6 left-6 text-gray-500 text-3xl"
+        >
+          <MdArrowBack />
+        </button>
+
+        <div className="max-w-2xl mx-auto">
+          <div className="text-center px-12">
+            <Link to="/">
+              <h1 className="text-2xl font-extrabold bg-gradient-to-r from-[#005175] to-[#01B6D1] bg-clip-text text-transparent leading-tight">
+                Gospel Library Semantic Search
+              </h1>
+            </Link>
+          </div>
 
           <h2 className="mt-8 text-xl font-semibold text-gray-700">
             Search History

@@ -1,6 +1,6 @@
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
-import { Link, useLoaderData, useNavigation } from "@remix-run/react";
+import { useLoaderData, useNavigation } from "@remix-run/react";
 import { useEffect } from "react";
 import { queryPineconeIndex } from "utils/pinecone.server";
 import { getFullName, getUrl, queryVerseData } from "utils/db.server";
@@ -10,6 +10,7 @@ import { SearchBar } from "~/components/SearchBar";
 import { SearchResults } from "~/components/SearchResults";
 import { Footer } from "~/components/Footer";
 import { HistoryButton } from "~/components/HistoryButton";
+import { SiteTitle } from "~/components/SiteTitle";
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   return [
@@ -71,13 +72,7 @@ export default function Search() {
       <main>
         <HistoryButton className="absolute top-6 right-6" />
         <div className="max-w-2xl mx-auto text-center">
-          <div className="px-12">
-            <Link to="/">
-              <h1 className="text-2xl font-extrabold bg-gradient-to-r from-[#005175] to-[#01B6D1] bg-clip-text text-transparent leading-tight">
-                Gospel Library Semantic Search
-              </h1>
-            </Link>
-          </div>
+          <SiteTitle />
 
           <SearchBar
             key={`${search}-${volumes.join(",")}`}

@@ -1,5 +1,5 @@
 import type { MetaFunction } from "@remix-run/node";
-import { Link, useNavigate } from "@remix-run/react";
+import { useNavigate } from "@remix-run/react";
 import { Card } from "antd";
 import { useEffect, useState } from "react";
 import { MdArrowBack } from "react-icons/md";
@@ -8,6 +8,7 @@ import {
   type SearchHistoryEntry,
 } from "utils/searchHistory";
 import { Footer } from "~/components/Footer";
+import { SiteTitle } from "~/components/SiteTitle";
 
 export const meta: MetaFunction = () => {
   return [{ title: "Search History - Gospel Library Semantic Search" }];
@@ -44,13 +45,7 @@ export default function History() {
         </button>
 
         <div className="max-w-2xl mx-auto">
-          <div className="text-center px-12">
-            <Link to="/">
-              <h1 className="text-2xl font-extrabold bg-gradient-to-r from-[#005175] to-[#01B6D1] bg-clip-text text-transparent leading-tight">
-                Gospel Library Semantic Search
-              </h1>
-            </Link>
-          </div>
+          <SiteTitle />
 
           <h2 className="mt-8 text-xl font-semibold text-gray-700">
             Search History

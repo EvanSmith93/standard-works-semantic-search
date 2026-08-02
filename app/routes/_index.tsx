@@ -22,7 +22,7 @@ export default function Index() {
       <main>
         <SearchHeader />
 
-        <div className="max-w-2xl mx-auto text-center">
+        <div className="max-w-2xl mx-auto text-center mt-12">
           <SearchBar />
         </div>
       </main>

@@ -51,7 +51,7 @@ export function SearchBar({
   }
 
   return (
-    <div className="mt-12">
+    <>
       <div className="relative">
         <Input.Search
           size="large"
@@ -91,6 +91,6 @@ export function SearchBar({
           </Tag.CheckableTag>
         ))}
       </div>
-    </div>
+    </>
   );
 }

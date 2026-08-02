@@ -44,14 +44,14 @@ export default function History() {
         <div className="max-w-2xl mx-auto">
           <SiteTitle />
 
-          <h2 className="mt-8 text-xl font-semibold text-gray-700">
+          <h2 className="text-xl font-semibold text-gray-700">
             Search History
           </h2>
         </div>
 
         <div className="mx-auto mt-6 max-w-2xl">
           {isLoaded && history.length === 0 ? (
-            <p className="text-center text-gray-500">
+            <p className="text-gray-500">
               You haven&apos;t searched anything yet.
             </p>
           ) : (

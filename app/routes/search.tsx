@@ -24,7 +24,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 };
 
 const RESULTS_PER_PAGE = 5;
-const MAX_LOAD_MORE_CLICKS = 2;
+const MAX_TOTAL_RESULTS = 15;
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
@@ -40,12 +40,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
     throw redirect("/");
   }
 
-  const skipParam = parseInt(url.searchParams.get("skip") ?? "0", 10);
-  const skip = Math.min(
-    Math.max(Number.isNaN(skipParam) ? 0 : skipParam, 0),
-    RESULTS_PER_PAGE * MAX_LOAD_MORE_CLICKS
-  );
-
+  const skipParam = parseInt(url.searchParams.get("skip") ?? "0");
+  const skip = Math.max(Number.isNaN(skipParam) ? 0 : skipParam, 0);
   const bestVerseIds = (
     await queryPineconeIndex(search, volumes, skip + RESULTS_PER_PAGE)
   ).slice(skip);
@@ -98,13 +94,9 @@ export default function Search() {
     fetcher.load(`/search?${params.toString()}`);
   }
 
-  // Show the button until 2 extra pages are loaded; a partial page
-  // (length not a multiple of RESULTS_PER_PAGE) means there are no more results.
   const showLoadMore =
     !isLoading &&
-    allResults.length > 0 &&
-    allResults.length < RESULTS_PER_PAGE * (MAX_LOAD_MORE_CLICKS + 1) &&
-    allResults.length % RESULTS_PER_PAGE === 0;
+    allResults.length < MAX_TOTAL_RESULTS;
 
   return (
     <div className="min-h-screen flex flex-col justify-between p-6">

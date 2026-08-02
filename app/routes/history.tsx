@@ -1,0 +1,73 @@
+import type { MetaFunction } from "@remix-run/node";
+import { Link, useNavigate } from "@remix-run/react";
+import { Card } from "antd";
+import { useEffect, useState } from "react";
+import {
+  getSearchHistory,
+  type SearchHistoryEntry,
+} from "utils/searchHistory";
+import { Footer } from "~/components/Footer";
+
+export const meta: MetaFunction = () => {
+  return [{ title: "Search History - Gospel Library Semantic Search" }];
+};
+
+export default function History() {
+  const navigate = useNavigate();
+  const [history, setHistory] = useState<SearchHistoryEntry[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    setHistory(getSearchHistory());
+    setIsLoaded(true);
+  }, []);
+
+  function onEntryClick(entry: SearchHistoryEntry) {
+    const params = new URLSearchParams({
+      q: entry.search,
+      volumes: entry.volumes.join(","),
+    });
+
+    navigate(`/search?${params.toString()}`);
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col justify-between p-6">
+      <main>
+        <div className="max-w-2xl mx-auto text-center">
+          <Link to="/">
+            <h1 className="text-2xl font-extrabold bg-gradient-to-r from-[#005175] to-[#01B6D1] bg-clip-text text-transparent leading-tight">
+              Gospel Library Semantic Search
+            </h1>
+          </Link>
+
+          <h2 className="mt-8 text-xl font-semibold text-gray-700">
+            Search History
+          </h2>
+        </div>
+
+        <div className="mx-auto mt-6 max-w-2xl">
+          {isLoaded && history.length === 0 ? (
+            <p className="text-center text-gray-500">
+              You haven&apos;t searched anything yet.
+            </p>
+          ) : (
+            history.map((entry, index) => (
+              <Card
+                size="small"
+                key={index}
+                className="mb-4 cursor-pointer shadow hover:shadow-lg transition-all duration-200"
+                hoverable
+                onClick={() => onEntryClick(entry)}
+              >
+                {entry.search}
+              </Card>
+            ))
+          )}
+        </div>
+      </main>
+
+      <Footer />
+    </div>
+  );
+}

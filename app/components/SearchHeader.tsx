@@ -1,17 +1,21 @@
 import { FaGithub } from "react-icons/fa";
+import { HistoryButton } from "~/components/HistoryButton";
 
 export function SearchHeader() {
   return (
     <>
-      <a
-        href="https://github.com/EvanSmith93/standard-works-semantic-search"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="absolute top-6 right-6 text-gray-500 text-3xl"
-        aria-label="GitHub Repository"
-      >
-        <FaGithub />
-      </a>
+      <div className="absolute top-6 right-6 flex items-center gap-4">
+        <HistoryButton />
+        <a
+          href="https://github.com/EvanSmith93/standard-works-semantic-search"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-gray-500 text-3xl"
+          aria-label="GitHub Repository"
+        >
+          <FaGithub />
+        </a>
+      </div>
 
       <div className="max-w-2xl mx-auto text-center mt-24">
         <h1 className="text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-[#005175] to-[#01B6D1] bg-clip-text text-transparent leading-tight">

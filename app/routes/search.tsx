@@ -1,12 +1,15 @@
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import { Link, useLoaderData, useNavigation } from "@remix-run/react";
+import { useEffect } from "react";
 import { queryPineconeIndex } from "utils/pinecone.server";
 import { getFullName, getUrl, queryVerseData } from "utils/db.server";
 import { VOLUMES } from "utils/helpers";
+import { addToSearchHistory } from "utils/searchHistory";
 import { SearchBar } from "~/components/SearchBar";
 import { SearchResults } from "~/components/SearchResults";
 import { Footer } from "~/components/Footer";
+import { HistoryButton } from "~/components/HistoryButton";
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   return [
@@ -58,15 +61,23 @@ export default function Search() {
 
   const isLoading = navigation.state === "loading";
 
+  useEffect(() => {
+    addToSearchHistory(search, volumes);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search, volumes.join(",")]);
+
   return (
     <div className="min-h-screen flex flex-col justify-between p-6">
       <main>
+        <HistoryButton className="absolute top-6 right-6" />
         <div className="max-w-2xl mx-auto text-center">
-          <Link to="/">
-            <h1 className="text-2xl font-extrabold bg-gradient-to-r from-[#005175] to-[#01B6D1] bg-clip-text text-transparent leading-tight">
-              Gospel Library Semantic Search
-            </h1>
-          </Link>
+          <div className="px-12">
+            <Link to="/">
+              <h1 className="text-2xl font-extrabold bg-gradient-to-r from-[#005175] to-[#01B6D1] bg-clip-text text-transparent leading-tight">
+                Gospel Library Semantic Search
+              </h1>
+            </Link>
+          </div>
 
           <SearchBar
             key={`${search}-${volumes.join(",")}`}

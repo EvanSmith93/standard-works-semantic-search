@@ -85,7 +85,7 @@ export function SearchBar({
 
               setSelectedVolumes(next);
             }}
-            className="text-sm mb-2"
+            className="text-sm mb-2 ml-2"
           >
             {volume.label}
           </Tag.CheckableTag>

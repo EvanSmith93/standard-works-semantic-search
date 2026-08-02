@@ -1,0 +1,10 @@
+node_modules
+build
+.cache
+.env
+.env.*
+!.env.example
+.git
+Dockerfile
+fly.toml
+**/.DS_Store

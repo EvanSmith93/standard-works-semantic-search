@@ -1,7 +1,8 @@
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
-import { useLoaderData, useNavigation } from "@remix-run/react";
-import { useEffect } from "react";
+import { useFetcher, useLoaderData, useNavigation } from "@remix-run/react";
+import { useEffect, useState } from "react";
+import { SearchResult } from "utils/types";
 import { queryPineconeIndex } from "utils/pinecone.server";
 import { getFullName, getUrl, queryVerseData } from "utils/db.server";
 import { VOLUMES } from "utils/helpers";
@@ -22,6 +23,9 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
   ];
 };
 
+const RESULTS_PER_PAGE = 5;
+const MAX_LOAD_MORE_CLICKS = 2;
+
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
   const search = url.searchParams.get("q")?.trim() ?? "";
@@ -36,7 +40,16 @@ export async function loader({ request }: LoaderFunctionArgs) {
     throw redirect("/");
   }
 
-  const bestVerseIds = await queryPineconeIndex(search, volumes, 5);
+  const skipParam = parseInt(url.searchParams.get("skip") ?? "0", 10);
+  const skip = Math.min(
+    Math.max(Number.isNaN(skipParam) ? 0 : skipParam, 0),
+    RESULTS_PER_PAGE * MAX_LOAD_MORE_CLICKS
+  );
+
+  // Pinecone has no offset, so fetch skip + page size and slice off the skipped results
+  const bestVerseIds = (
+    await queryPineconeIndex(search, volumes, skip + RESULTS_PER_PAGE)
+  ).slice(skip);
 
   const results = await Promise.all(
     bestVerseIds.map(async (verse) => {
@@ -59,13 +72,47 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export default function Search() {
   const { results, search, volumes } = useLoaderData<typeof loader>();
   const navigation = useNavigation();
+  const fetcher = useFetcher<typeof loader>();
+
+  const [moreResults, setMoreResults] = useState<SearchResult[]>([]);
+  const [loadMoreClicks, setLoadMoreClicks] = useState(0);
+  const [exhausted, setExhausted] = useState(false);
 
   const isLoading = navigation.state === "loading";
 
   useEffect(() => {
     addToSearchHistory(search, volumes);
+    setMoreResults([]);
+    setLoadMoreClicks(0);
+    setExhausted(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search, volumes.join(",")]);
+
+  useEffect(() => {
+    if (!fetcher.data) return;
+
+    const newResults = fetcher.data.results;
+    setMoreResults((prev) => [...prev, ...newResults]);
+    if (newResults.length < RESULTS_PER_PAGE) {
+      setExhausted(true);
+    }
+  }, [fetcher.data]);
+
+  function onLoadMore() {
+    const params = new URLSearchParams({
+      q: search,
+      volumes: volumes.join(","),
+      skip: String(results.length + moreResults.length),
+    });
+    fetcher.load(`/search?${params.toString()}`);
+    setLoadMoreClicks((clicks) => clicks + 1);
+  }
+
+  const showLoadMore =
+    !isLoading &&
+    !exhausted &&
+    results.length >= RESULTS_PER_PAGE &&
+    (loadMoreClicks < MAX_LOAD_MORE_CLICKS || fetcher.state !== "idle");
 
   return (
     <div className="min-h-screen flex flex-col justify-between p-6">
@@ -82,7 +129,13 @@ export default function Search() {
           />
         </div>
 
-        <SearchResults results={results} isLoading={isLoading} />
+        <SearchResults
+          results={[...results, ...moreResults]}
+          isLoading={isLoading}
+          showLoadMore={showLoadMore}
+          isLoadingMore={fetcher.state !== "idle"}
+          onLoadMore={onLoadMore}
+        />
       </main>
 
       <Footer />

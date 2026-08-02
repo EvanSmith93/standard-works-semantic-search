@@ -3,7 +3,7 @@ import { redirect } from "@remix-run/node";
 import { useFetcher, useLoaderData, useNavigation } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { SearchResult } from "utils/types";
-import { queryPineconeIndex } from "utils/pinecone.server";
+import { queryPineconePage } from "utils/pinecone.server";
 import { getFullName, getUrl, queryVerseData } from "utils/db.server";
 import { VOLUMES } from "utils/helpers";
 import { addToSearchHistory } from "utils/searchHistory";
@@ -42,9 +42,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const skipParam = parseInt(url.searchParams.get("skip") ?? "0");
   const skip = Math.max(Number.isNaN(skipParam) ? 0 : skipParam, 0);
-  const bestVerseIds = (
-    await queryPineconeIndex(search, volumes, skip + RESULTS_PER_PAGE)
-  ).slice(skip);
+  const bestVerseIds = await queryPineconePage(
+    search,
+    volumes,
+    skip,
+    RESULTS_PER_PAGE
+  );
 
   const results = await Promise.all(
     bestVerseIds.map(async (verse) => {

@@ -65,6 +65,17 @@ export async function queryPineconeIndex(
   }));
 }
 
+// Pinecone queries have no offset, so over-fetch and drop the skipped results
+export async function queryPineconePage(
+  search: string,
+  volumes: string[],
+  skip: number,
+  count: number
+): Promise<QueryResult[]> {
+  const results = await queryPineconeIndex(search, volumes, skip + count);
+  return results.slice(skip);
+}
+
 function chunk<T>(array: T[], batchSize: number) {
   const chunks: T[][] = [];
 

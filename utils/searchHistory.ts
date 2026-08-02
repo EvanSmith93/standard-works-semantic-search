@@ -28,7 +28,7 @@ export function addToSearchHistory(search: string, volumes: string[]) {
 
   const history = getSearchHistory().filter(
     (entry) =>
-      entry.search !== search || entry.volumes.join(",") !== volumes.join(",")
+      entry.search !== search || entry.volumes.join(",") !== volumes.join(","),
   );
 
   history.unshift({ search, volumes, timestamp: Date.now() });
@@ -36,7 +36,7 @@ export function addToSearchHistory(search: string, volumes: string[]) {
   try {
     window.localStorage.setItem(
       STORAGE_KEY,
-      JSON.stringify(history.slice(0, MAX_ENTRIES))
+      JSON.stringify(history.slice(0, MAX_ENTRIES)),
     );
   } catch {
     // Ignore write failures (e.g. storage disabled or full)

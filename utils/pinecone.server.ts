@@ -35,7 +35,7 @@ export async function createPineconeIndex() {
 async function queryPineconeIndex(
   search: string,
   volumes: string[],
-  resultCount: number
+  resultCount: number,
 ): Promise<QueryResult[]> {
   const pc = new Pinecone({
     apiKey: process.env.PINECONE_API_KEY!,
@@ -63,7 +63,7 @@ export async function queryPineconePage(
   search: string,
   volumes: string[],
   skip: number,
-  count: number
+  count: number,
 ): Promise<QueryResult[]> {
   const results = await queryPineconeIndex(search, volumes, skip + count);
   return results.slice(skip);
@@ -93,7 +93,7 @@ async function takeMinimumTime(func: () => Promise<void>, minTime: number) {
 }
 
 export async function upsertDocuments(
-  documents: Awaited<ReturnType<typeof getVersesAndVolumes>>
+  documents: Awaited<ReturnType<typeof getVersesAndVolumes>>,
 ) {
   const pc = new Pinecone({ apiKey: process.env.PINECONE_API_KEY! });
 
@@ -111,9 +111,9 @@ export async function upsertDocuments(
             _id: String(record.id),
             text: record.scripture_text,
             category: record.volume_lds_url,
-          }))
+          })),
         ),
-      750
+      750,
     );
   }
 }

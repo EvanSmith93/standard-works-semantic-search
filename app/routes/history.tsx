@@ -3,10 +3,7 @@ import { useNavigate } from "@remix-run/react";
 import { Card } from "antd";
 import { useEffect, useState } from "react";
 import { MdArrowBack } from "react-icons/md";
-import {
-  getSearchHistory,
-  type SearchHistoryEntry,
-} from "utils/searchHistory";
+import { getSearchHistory, type SearchHistoryEntry } from "utils/searchHistory";
 import { Footer } from "~/components/Footer";
 import { SiteTitle } from "~/components/SiteTitle";
 

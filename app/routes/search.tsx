@@ -45,7 +45,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     search,
     volumes,
     skip,
-    RESULTS_PER_PAGE
+    RESULTS_PER_PAGE,
   );
 
   const results = await Promise.all(
@@ -60,7 +60,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
         name,
         url,
       };
-    })
+    }),
   );
 
   return { results, search, volumes };
@@ -96,9 +96,7 @@ export default function Search() {
     fetcher.load(`/search?${params.toString()}`);
   }
 
-  const showLoadMore =
-    !isLoading &&
-    allResults.length < MAX_TOTAL_RESULTS;
+  const showLoadMore = !isLoading && allResults.length < MAX_TOTAL_RESULTS;
 
   return (
     <div className="min-h-screen flex flex-col justify-between p-6">

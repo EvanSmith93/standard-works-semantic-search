@@ -20,7 +20,7 @@ export function SearchBar({
   const [search, setSearch] = useState(initialSearch);
   const [isFocused, setIsFocused] = useState(false);
   const [selectedVolumes, setSelectedVolumes] = useState<string[]>(
-    initialVolumes ?? VOLUMES.map((volume) => volume.volume_lds_url)
+    initialVolumes ?? VOLUMES.map((volume) => volume.volume_lds_url),
   );
 
   const isSearching =

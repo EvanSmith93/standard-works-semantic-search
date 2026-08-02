@@ -7,11 +7,13 @@ import { EXAMPLE_SEARCHES, shuffle, VOLUMES } from "utils/helpers";
 interface SearchBarProps {
   initialSearch?: string;
   initialVolumes?: string[];
+  showSuggestions?: boolean;
 }
 
 export function SearchBar({
   initialSearch = "",
   initialVolumes,
+  showSuggestions = true,
 }: SearchBarProps) {
   const navigate = useNavigate();
   const navigation = useNavigation();
@@ -62,7 +64,7 @@ export function SearchBar({
           className={"[&_input]:bg-transparent"}
         />
         <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 z-10">
-          {!isFocused && search.trim() === "" && (
+          {showSuggestions && !isFocused && search.trim() === "" && (
             <TypeAnimation sequence={sequence} speed={65} repeat={Infinity} />
           )}
         </div>

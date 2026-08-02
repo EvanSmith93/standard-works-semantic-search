@@ -72,6 +72,7 @@ export default function Search() {
             key={`${search}-${volumes.join(",")}`}
             initialSearch={search}
             initialVolumes={volumes}
+            showSuggestions={false}
           />
         </div>
 

@@ -23,8 +23,8 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
   ];
 };
 
-const RESULTS_PER_PAGE = 5;
-const MAX_TOTAL_RESULTS = 15;
+const RESULTS_PER_PAGE = 6;
+const MAX_TOTAL_RESULTS = 18;
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
@@ -40,8 +40,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     throw redirect("/");
   }
 
-  const skipParam = parseInt(url.searchParams.get("skip") ?? "0");
-  const skip = Math.max(Number.isNaN(skipParam) ? 0 : skipParam, 0);
+  const skip = parseInt(url.searchParams.get("skip") ?? "0");
   const bestVerseIds = await queryPineconePage(
     search,
     volumes,

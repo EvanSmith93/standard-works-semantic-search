@@ -32,7 +32,7 @@ export async function createPineconeIndex() {
   }
 }
 
-export async function queryPineconeIndex(
+async function queryPineconeIndex(
   search: string,
   volumes: string[],
   resultCount: number
@@ -53,19 +53,12 @@ export async function queryPineconeIndex(
     fields: ["text", "category"],
   });
 
-  // console.log(
-  //   searchWithId.result.hits.map(
-  //     (hit) => `${hit._id} - ${hit._score} - ${JSON.stringify(hit.fields)}\n\n`
-  //   )
-  // );
-
   return searchWithId.result.hits.map((hit) => ({
     id: hit._id,
     text: (hit.fields as { text: string }).text,
   }));
 }
 
-// Pinecone queries have no offset, so over-fetch and drop the skipped results
 export async function queryPineconePage(
   search: string,
   volumes: string[],

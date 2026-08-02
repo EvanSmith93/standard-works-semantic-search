@@ -20,6 +20,7 @@
     "dotenv": "^16.5.0",
     "isbot": "^4.1.0",
     "kysely": "^0.28.2",
+    "lucide-react": "^1.28.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^5.5.0",

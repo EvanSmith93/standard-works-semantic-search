@@ -1,4 +1,5 @@
 import { Button, Card, Spin } from "antd";
+import { ExternalLink } from "lucide-react";
 import { SearchResult } from "utils/types";
 
 interface SearchResultsProps {
@@ -31,6 +32,7 @@ export function SearchResults({
           {results.map((result, index) => (
             <Card
               title={result.name}
+              extra={<ExternalLink size={16} />}
               size="small"
               key={index}
               className="mb-4 cursor-pointer shadow hover:shadow-lg transition-all duration-200"

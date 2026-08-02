@@ -46,7 +46,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
     RESULTS_PER_PAGE * MAX_LOAD_MORE_CLICKS
   );
 
-  // Pinecone has no offset, so fetch skip + page size and slice off the skipped results
   const bestVerseIds = (
     await queryPineconeIndex(search, volumes, skip + RESULTS_PER_PAGE)
   ).slice(skip);
@@ -74,27 +73,27 @@ export default function Search() {
   const navigation = useNavigation();
   const fetcher = useFetcher<typeof loader>();
 
-  const [moreResults, setMoreResults] = useState<SearchResult[]>([]);
+  const [allResults, setAllResults] = useState<SearchResult[]>(results);
 
   const isLoading = navigation.state === "loading";
 
   useEffect(() => {
     addToSearchHistory(search, volumes);
-    setMoreResults([]);
+    setAllResults(results);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search, volumes.join(",")]);
 
   useEffect(() => {
     if (!fetcher.data) return;
     const newResults = fetcher.data.results;
-    setMoreResults((prev) => [...prev, ...newResults]);
+    setAllResults((prev) => [...prev, ...newResults]);
   }, [fetcher.data]);
 
   function onLoadMore() {
     const params = new URLSearchParams({
       q: search,
       volumes: volumes.join(","),
-      skip: String(results.length + moreResults.length),
+      skip: String(allResults.length),
     });
     fetcher.load(`/search?${params.toString()}`);
   }
@@ -103,9 +102,9 @@ export default function Search() {
   // (length not a multiple of RESULTS_PER_PAGE) means there are no more results.
   const showLoadMore =
     !isLoading &&
-    results.length === RESULTS_PER_PAGE &&
-    moreResults.length < RESULTS_PER_PAGE * MAX_LOAD_MORE_CLICKS &&
-    moreResults.length % RESULTS_PER_PAGE === 0;
+    allResults.length > 0 &&
+    allResults.length < RESULTS_PER_PAGE * (MAX_LOAD_MORE_CLICKS + 1) &&
+    allResults.length % RESULTS_PER_PAGE === 0;
 
   return (
     <div className="min-h-screen flex flex-col justify-between p-6">
@@ -123,7 +122,7 @@ export default function Search() {
         </div>
 
         <SearchResults
-          results={[...results, ...moreResults]}
+          results={allResults}
           isLoading={isLoading}
           showLoadMore={showLoadMore}
           isLoadingMore={fetcher.state !== "idle"}

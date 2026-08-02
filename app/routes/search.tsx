@@ -75,27 +75,19 @@ export default function Search() {
   const fetcher = useFetcher<typeof loader>();
 
   const [moreResults, setMoreResults] = useState<SearchResult[]>([]);
-  const [loadMoreClicks, setLoadMoreClicks] = useState(0);
-  const [exhausted, setExhausted] = useState(false);
 
   const isLoading = navigation.state === "loading";
 
   useEffect(() => {
     addToSearchHistory(search, volumes);
     setMoreResults([]);
-    setLoadMoreClicks(0);
-    setExhausted(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search, volumes.join(",")]);
 
   useEffect(() => {
     if (!fetcher.data) return;
-
     const newResults = fetcher.data.results;
     setMoreResults((prev) => [...prev, ...newResults]);
-    if (newResults.length < RESULTS_PER_PAGE) {
-      setExhausted(true);
-    }
   }, [fetcher.data]);
 
   function onLoadMore() {
@@ -105,14 +97,15 @@ export default function Search() {
       skip: String(results.length + moreResults.length),
     });
     fetcher.load(`/search?${params.toString()}`);
-    setLoadMoreClicks((clicks) => clicks + 1);
   }
 
+  // Show the button until 2 extra pages are loaded; a partial page
+  // (length not a multiple of RESULTS_PER_PAGE) means there are no more results.
   const showLoadMore =
     !isLoading &&
-    !exhausted &&
-    results.length >= RESULTS_PER_PAGE &&
-    (loadMoreClicks < MAX_LOAD_MORE_CLICKS || fetcher.state !== "idle");
+    results.length === RESULTS_PER_PAGE &&
+    moreResults.length < RESULTS_PER_PAGE * MAX_LOAD_MORE_CLICKS &&
+    moreResults.length % RESULTS_PER_PAGE === 0;
 
   return (
     <div className="min-h-screen flex flex-col justify-between p-6">
